@@ -1,0 +1,146 @@
+; current orbit angle
+(define mercuryAngle 0)
+(define venusAngle 0)
+(define earthAngle 0)
+(define marsAngle 0)
+(define jupiterAngle 0)
+(define saturnAngle 0)
+(define neptuneAngle 0)
+(define cubosAngle 0)
+(define moonAngle 0)
+
+; planet transforms
+(define mercX 0) (define mercZ 0)
+(define venX 0) (define venZ  0)
+(define earX 0) (define earZ  0)
+(define marX 0) (define marZ  0)
+(define jupX 0) (define jupZ  0)
+(define satX 0) (define satZ  0)
+(define nepX 0) (define nepZ  0)
+(define cubX 0) (define cubZ  0)
+(define moonX 0) (define moonZ 0)
+
+; orbit radii
+(define mercuryR 2.5)
+(define venusR 3.5)
+(define earthR 5.0)
+(define marsR 6.5)
+(define jupiterR 9.0)
+(define saturnR 12.0)
+(define cubosR 17.0)
+(define neptuneR 14.5)
+(define moonR 0.7)
+
+; draws orbit rings
+(defun drawOrbitRing (rad)
+  (glBegin GL_LINE_LOOP)
+  (glColor3f 0.3 0.3 0.45)
+  (loop for i from 0 to 72 by 1 do
+    (glVertex3f (* rad (cos (/ (* 2 3.14159 i) 72)))
+                0
+                (* rad (sin (/ (* 2 3.14159 i) 72)))))
+  (glEnd))
+
+; main loop
+(defun draw ()
+  (clear (0 0 0 1))
+  (glLoadIdentity)
+  (glTranslatef 0 5 -21)
+  (glRotatef 45 1 0 0)
+
+  ; WE HAVE LIGHT, BOYS! LETS GOOOOOOOO
+  (light on)
+  (setlight 0 0 0 1)
+
+  ; update planet transforms
+  (set! mercX (* mercuryR (cos mercuryAngle)))
+  (set! mercZ (* mercuryR (sin mercuryAngle)))
+  (set! venX (* venusR (cos venusAngle)))
+  (set! venZ (* venusR (sin venusAngle)))
+  (set! earX (* earthR (cos earthAngle)))
+  (set! earZ (* earthR (sin earthAngle)))
+  (set! marX (* marsR (cos marsAngle)))
+  (set! marZ (* marsR (sin marsAngle)))
+  (set! jupX (* jupiterR (cos jupiterAngle)))
+  (set! jupZ (* jupiterR (sin jupiterAngle)))
+  (set! satX (* saturnR (cos saturnAngle)))
+  (set! satZ (* saturnR (sin saturnAngle)))
+  (set! cubX (* cubosR (cos cubosAngle)))
+  (set! cubZ (* cubosR (sin cubosAngle)))
+  (set! nepX (* neptuneR (cos neptuneAngle)))
+  (set! nepZ (* neptuneR (sin neptuneAngle)))
+  (set! moonX (+ earX (* moonR (cos moonAngle))))
+  (set! moonZ (+ earZ (* moonR (sin moonAngle))))
+
+  (glDisable GL_LIGHTING)
+  (drawOrbitRing mercuryR)
+  (drawOrbitRing venusR)
+  (drawOrbitRing earthR)
+  (drawOrbitRing marsR)
+  (drawOrbitRing jupiterR)
+  (drawOrbitRing saturnR)
+  (drawOrbitRing neptuneR)
+  (drawOrbitRing cubosR)
+  (glEnable GL_LIGHTING)
+
+  ; sun
+  (light off)
+  (sphere yellow (0 0 0) (1.5 1.5 1.5) (0 0 0))
+  (light on)
+  (setlight 0 0 0 1)
+
+  ; mercury
+  (sphere white (0 0 0) (0.10 0.10 0.10) (mercX 0 mercZ))
+
+  ; venus
+  (sphere yellow (0 0 0) (0.18 0.18 0.18) (venX 0 venZ))
+
+  ; earth
+  (sphere cyan (0 0 0) (0.22 0.22 0.22) (earX 0 earZ))
+
+  ; moon - orbits earth
+  (sphere white (0 0 0) (0.07 0.07 0.07) (moonX 0 moonZ))
+
+  ; mars
+  (sphere red (0 0 0) (0.15 0.15 0.15) (marX 0 marZ))
+
+  ; jupiter
+  (sphere orange (0 0 0) (0.60 0.60 0.60) (jupX 0 jupZ))
+
+  ; saturn
+  (sphere yellow (0 0 0) (0.50 0.50 0.50) (satX 0 satZ))
+
+  ; neptune
+  (sphere blue (0 0 0) (0.40 0.40 0.40) (nepX 0 nepZ))
+
+  ; cubos
+  (cube purple (0 (* earthAngle -100) 0) (0.75 0.75 0.75) (cubX 0 cubZ))
+
+  ; angle deltas
+  (set! mercuryAngle (+ mercuryAngle 0.040))
+  (set! venusAngle (+ venusAngle   0.016))
+  (set! earthAngle (+ earthAngle   0.010))
+  (set! marsAngle (+ marsAngle    0.006))
+  (set! jupiterAngle (+ jupiterAngle 0.002))
+  (set! saturnAngle (+ saturnAngle  0.001))
+  (set! neptuneAngle (+ neptuneAngle 0.0006))
+  (set! cubosAngle (+ cubosAngle 0.0015 (- (* 0.1 (sin mercuryAngle) (* 0.1 (sin venusAngle))))))
+  (set! moonAngle (+ moonAngle    0.060))
+
+  (reqanimframe draw))
+
+(reqanimframe draw)
+
+
+; the rest of the stuff
+(if (or true false) (display "The OR is implemented... actually has been since last assignment I thought we needed it for part 1"))
+
+; the operations get folded into 10, output becomes "console.log(10);"
+(display (+ 1 2 3 4))
+
+; expression that is never applied is removed - dead code removal
+(+ 5 5)
+
+; unused variable definitions are removed from the output code
+(define uselessVariable 21)
+

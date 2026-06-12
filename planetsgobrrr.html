@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Planets Go Brrrr!!!11!1</title>
+  <style>
+    body { background: DarkSlateGrey; display: flex; flex-direction: column;
+           align-items: center; justify-content: center;}
+    canvas { border: 2px solid; display: block; }
+  </style>
+  <script src="https://www.ecst.csuchico.edu/~oal-saadi/Graphics/source/glsim.js"></script>
+</head>
+<body>
+  <h1>Planets Go Brrrr!!!11!1</h1>
+  <p>Sorry. I'm not very creative.</p>
+  <canvas id="glcanvas" width="600" height="600">
+  <script>
+  glsimUse("glcanvas");
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  glFrustum(-1.0, 1.0, -1.0, 1.0, 1.0, 100.0);
+  glMatrixMode(GL_MODELVIEW);
+  glEnable(GL_DEPTH_TEST);
+  glLightfv(GL_LIGHT0, GL_AMBIENT, [0.15, 0.15, 0.4, 1.0]);
+  function smoothSphere(radius, slices, stacks) {
+      var i,j;
+      for (j = 0; j < stacks; j++) {
+          var latitude1 = (Math.PI/stacks) * j - Math.PI/2;
+          var latitude2 = (Math.PI/stacks) * (j+1) - Math.PI/2;
+          var sinLat1 = Math.sin(latitude1);
+          var cosLat1 = Math.cos(latitude1);
+          var sinLat2 = Math.sin(latitude2);
+          var cosLat2 = Math.cos(latitude2);
+          glBegin(GL_QUAD_STRIP);
+          for (i = 0; i <= slices; i++) {
+              var longitude = (2*Math.PI/slices) * i;
+              var sinLong = Math.sin(longitude);
+              var cosLong = Math.cos(longitude);
+              var x1 = cosLong * cosLat1;
+              var y1 = sinLong * cosLat1;
+              var z1 = sinLat1;
+              var x2 = cosLong * cosLat2;
+              var y2 = sinLong * cosLat2;
+              var z2 = sinLat2;
+              glNormal3d(x2,y2,z2);
+              glVertex3d(radius*x2,radius*y2,radius*z2);
+              glNormal3d(x1,y1,z1);
+              glVertex3d(radius*x1,radius*y1,radius*z1);
+          }
+          glEnd();
+      }
+  }
+  function drawCube() {
+      glBegin(GL_QUADS);
+      // Front face (z+)
+      glNormal3d(0, 0, 1);
+      glVertex3f(-1, -1,  1); glVertex3f( 1, -1,  1); 
+      glVertex3f( 1,  1,  1); glVertex3f(-1,  1,  1);
+      // Back face (z-)
+      glNormal3d(0, 0, -1);
+      glVertex3f(-1, -1, -1); glVertex3f(-1,  1, -1); 
+      glVertex3f( 1,  1, -1); glVertex3f( 1, -1, -1);
+      // Top face (y+)
+      glNormal3d(0, 1, 0);
+      glVertex3f(-1,  1, -1); glVertex3f(-1,  1,  1); 
+      glVertex3f( 1,  1,  1); glVertex3f( 1,  1, -1);
+      // Bottom face (y-)
+      glNormal3d(0, -1, 0);
+      glVertex3f(-1, -1, -1); glVertex3f( 1, -1, -1); 
+      glVertex3f( 1, -1,  1); glVertex3f(-1, -1,  1);
+      // Right face (x+)
+      glNormal3d(1, 0, 0);
+      glVertex3f( 1, -1, -1); glVertex3f( 1,  1, -1); 
+      glVertex3f( 1,  1,  1); glVertex3f( 1, -1,  1);
+      // Left face (x-)
+      glNormal3d(-1, 0, 0);
+      glVertex3f(-1, -1, -1); glVertex3f(-1, -1,  1); 
+      glVertex3f(-1,  1,  1); glVertex3f(-1,  1, -1);
+      glEnd();
+  }
+let mercuryAngle = 0;
+let venusAngle = 0;
+let earthAngle = 0;
+let marsAngle = 0;
+let jupiterAngle = 0;
+let saturnAngle = 0;
+let neptuneAngle = 0;
+let cubosAngle = 0;
+let moonAngle = 0;
+let mercX = 0;
+let mercZ = 0;
+let venX = 0;
+let venZ = 0;
+let earX = 0;
+let earZ = 0;
+let marX = 0;
+let marZ = 0;
+let jupX = 0;
+let jupZ = 0;
+let satX = 0;
+let satZ = 0;
+let nepX = 0;
+let nepZ = 0;
+let cubX = 0;
+let cubZ = 0;
+let moonX = 0;
+let moonZ = 0;
+let mercuryR = 2.5;
+let venusR = 3.5;
+let earthR = 5;
+let marsR = 6.5;
+let jupiterR = 9;
+let saturnR = 12;
+let cubosR = 17;
+let neptuneR = 14.5;
+let moonR = 0.7;
+function drawOrbitRing(rad) {
+glBegin(GL_LINE_LOOP);
+glColor3f(0.3, 0.3, 0.45);
+for (let i = 0; i <= 72; i += 1) {
+glVertex3f((rad * Math.cos(((2 * 3.14159 * i) / 72))), 0, (rad * Math.sin(((2 * 3.14159 * i) / 72))));
+};
+glEnd();
+};
+function draw() {
+glClearColor(0, 0, 0, 1);
+glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+glLoadIdentity();
+glTranslatef(0, 5, -21);
+glRotatef(45, 1, 0, 0);
+glEnable(GL_LIGHTING);
+glEnable(GL_LIGHT0);
+glEnable(GL_COLOR_MATERIAL);
+;
+glLightfv(GL_LIGHT0, GL_POSITION, [0, 0, 0, 1]);
+;
+mercX = (mercuryR * Math.cos(mercuryAngle));
+mercZ = (mercuryR * Math.sin(mercuryAngle));
+venX = (venusR * Math.cos(venusAngle));
+venZ = (venusR * Math.sin(venusAngle));
+earX = (earthR * Math.cos(earthAngle));
+earZ = (earthR * Math.sin(earthAngle));
+marX = (marsR * Math.cos(marsAngle));
+marZ = (marsR * Math.sin(marsAngle));
+jupX = (jupiterR * Math.cos(jupiterAngle));
+jupZ = (jupiterR * Math.sin(jupiterAngle));
+satX = (saturnR * Math.cos(saturnAngle));
+satZ = (saturnR * Math.sin(saturnAngle));
+cubX = (cubosR * Math.cos(cubosAngle));
+cubZ = (cubosR * Math.sin(cubosAngle));
+nepX = (neptuneR * Math.cos(neptuneAngle));
+nepZ = (neptuneR * Math.sin(neptuneAngle));
+moonX = (earX + (moonR * Math.cos(moonAngle)));
+moonZ = (earZ + (moonR * Math.sin(moonAngle)));
+glDisable(GL_LIGHTING);
+drawOrbitRing(mercuryR);
+drawOrbitRing(venusR);
+drawOrbitRing(earthR);
+drawOrbitRing(marsR);
+drawOrbitRing(jupiterR);
+drawOrbitRing(saturnR);
+drawOrbitRing(neptuneR);
+drawOrbitRing(cubosR);
+glEnable(GL_LIGHTING);
+glDisable(GL_LIGHTING);
+;
+glPushMatrix();
+glTranslatef(0, 0, 0);
+glRotatef(0, 1, 0, 0);
+glRotatef(0, 0, 1, 0);
+glRotatef(0, 0, 0, 1);
+glScalef(1.5, 1.5, 1.5);
+glColor3f(1.0, 1.0, 0.0);
+smoothSphere(1.0, 15, 15);
+glPopMatrix();
+;
+glEnable(GL_LIGHTING);
+glEnable(GL_LIGHT0);
+glEnable(GL_COLOR_MATERIAL);
+;
+glLightfv(GL_LIGHT0, GL_POSITION, [0, 0, 0, 1]);
+;
+glPushMatrix();
+glTranslatef(mercX, 0, mercZ);
+glRotatef(0, 1, 0, 0);
+glRotatef(0, 0, 1, 0);
+glRotatef(0, 0, 0, 1);
+glScalef(0.1, 0.1, 0.1);
+glColor3f(1.0, 1.0, 1.0);
+smoothSphere(1.0, 15, 15);
+glPopMatrix();
+;
+glPushMatrix();
+glTranslatef(venX, 0, venZ);
+glRotatef(0, 1, 0, 0);
+glRotatef(0, 0, 1, 0);
+glRotatef(0, 0, 0, 1);
+glScalef(0.18, 0.18, 0.18);
+glColor3f(1.0, 1.0, 0.0);
+smoothSphere(1.0, 15, 15);
+glPopMatrix();
+;
+glPushMatrix();
+glTranslatef(earX, 0, earZ);
+glRotatef(0, 1, 0, 0);
+glRotatef(0, 0, 1, 0);
+glRotatef(0, 0, 0, 1);
+glScalef(0.22, 0.22, 0.22);
+glColor3f(0.0, 1.0, 1.0);
+smoothSphere(1.0, 15, 15);
+glPopMatrix();
+;
+glPushMatrix();
+glTranslatef(moonX, 0, moonZ);
+glRotatef(0, 1, 0, 0);
+glRotatef(0, 0, 1, 0);
+glRotatef(0, 0, 0, 1);
+glScalef(0.07, 0.07, 0.07);
+glColor3f(1.0, 1.0, 1.0);
+smoothSphere(1.0, 15, 15);
+glPopMatrix();
+;
+glPushMatrix();
+glTranslatef(marX, 0, marZ);
+glRotatef(0, 1, 0, 0);
+glRotatef(0, 0, 1, 0);
+glRotatef(0, 0, 0, 1);
+glScalef(0.15, 0.15, 0.15);
+glColor3f(1.0, 0.0, 0.0);
+smoothSphere(1.0, 15, 15);
+glPopMatrix();
+;
+glPushMatrix();
+glTranslatef(jupX, 0, jupZ);
+glRotatef(0, 1, 0, 0);
+glRotatef(0, 0, 1, 0);
+glRotatef(0, 0, 0, 1);
+glScalef(0.6, 0.6, 0.6);
+glColor3f(1.0, 0.5, 0.0);
+smoothSphere(1.0, 15, 15);
+glPopMatrix();
+;
+glPushMatrix();
+glTranslatef(satX, 0, satZ);
+glRotatef(0, 1, 0, 0);
+glRotatef(0, 0, 1, 0);
+glRotatef(0, 0, 0, 1);
+glScalef(0.5, 0.5, 0.5);
+glColor3f(1.0, 1.0, 0.0);
+smoothSphere(1.0, 15, 15);
+glPopMatrix();
+;
+glPushMatrix();
+glTranslatef(nepX, 0, nepZ);
+glRotatef(0, 1, 0, 0);
+glRotatef(0, 0, 1, 0);
+glRotatef(0, 0, 0, 1);
+glScalef(0.4, 0.4, 0.4);
+glColor3f(0.0, 0.0, 1.0);
+smoothSphere(1.0, 15, 15);
+glPopMatrix();
+;
+glPushMatrix();
+glTranslatef(cubX, 0, cubZ);
+glRotatef(0, 1, 0, 0);
+glRotatef((earthAngle * -100), 0, 1, 0);
+glRotatef(0, 0, 0, 1);
+glScalef(0.75, 0.75, 0.75);
+glColor3f(0.5, 0.0, 0.5);
+drawCube();
+glPopMatrix();
+;
+mercuryAngle = (mercuryAngle + 0.04);
+venusAngle = (venusAngle + 0.016);
+earthAngle = (earthAngle + 0.01);
+marsAngle = (marsAngle + 0.006);
+jupiterAngle = (jupiterAngle + 0.002);
+saturnAngle = (saturnAngle + 0.001);
+neptuneAngle = (neptuneAngle + 0.0006);
+cubosAngle = (cubosAngle + 0.0015 + ((0.1 * Math.sin(mercuryAngle) * (0.1 * Math.sin(venusAngle)))));
+moonAngle = (moonAngle + 0.06);
+requestAnimationFrame(draw);
+};
+requestAnimationFrame(draw);
+if ((true || false)) {
+console.log("The OR is implemented... actually has been since last assignment I thought we needed it for part 1");
+};
+console.log(10);
+
+</script>
+</body>
+</html>
