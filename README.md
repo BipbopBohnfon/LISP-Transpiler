@@ -4,7 +4,9 @@ This takes a little Lisp-looking language and spits out one HTML file that draws
 
 The sample program in `input` is a solar system. Planets orbit a sun, the moon orbits earth, a purple cube wanders around on its own orbit for no good reason, and the whole thing animates with `requestAnimationFrame`. The generated page is titled `Planets Go Brrrr!!!11!1`. I never claimed to be good at naming things.
 
-![PlanetsGoBrrr](docs/planets.gif)
+<div align="center">
+  <img src="docs/planets.gif" alt="PlanetsGoBrrr" width="500">
+</div>
 
 ## What it can do
 
